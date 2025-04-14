@@ -1,0 +1,25 @@
+{
+  "name": "thomas-institut/datacache",
+  "description": "Cache abstraction and basic implementation",
+  "minimum-stability": "stable",
+  "license": "GPL-3.0-or-later",
+  "authors": [
+    {
+      "name": "Rafael Nájera",
+      "email": "rafael.najera@uni-koeln.de"
+    }
+  ],
+  "require": {
+    "php": ">=8.3"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^12.0",
+    "thomas-institut/timestring": "v2.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "ThomasInstitut\\DataCache\\": "DataCache",
+      "ThomasInstitut\\Test\\DataCache\\": "Test\\DataCache"
+    }
+  }
+}
