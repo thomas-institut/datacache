@@ -1,5 +1,5 @@
 <?php
-/* 
+/*
  *  Copyright (C) 2020-2025 Universität zu Köln
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -139,6 +139,4 @@ interface DataCache
      * @return void
      */
     public function clean() : void;
-
-
 }

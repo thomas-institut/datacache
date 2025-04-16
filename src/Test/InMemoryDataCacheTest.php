@@ -1,6 +1,6 @@
 <?php
-/* 
- *  Copyright (C) 2020-2025 Universität zu Köln
+/*
+ *  Copyright (C) 2020-25 Universität zu Köln
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -14,18 +14,22 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  */
 
-namespace ThomasInstitut\DataCache;
+namespace ThomasInstitut\Test\DataCache;
 
+use PHPUnit\Framework\TestCase;
+use ThomasInstitut\DataCache\InMemoryDataCache;
+use ThomasInstitut\DataCache\Reference\DataCacheReferenceTest;
 
-use Exception;
-
-/**
- * Exception thrown when a key does not exist in a DataCache implementation
- */
-class ItemNotInCacheException extends Exception
+class InMemoryDataCacheTest extends TestCase
 {
 
+
+    public function testStandardTests()
+    {
+        $tester = new DataCacheReferenceTest('InMemory');
+        $tester->runAllTests(new InMemoryDataCache(), 'InMemoryDataCache');
+    }
 }

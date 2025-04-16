@@ -21,19 +21,18 @@ namespace ThomasInstitut\Test\DataCache;
 
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
-use ThomasInstitut\DataCache\CacheAware;
 use ThomasInstitut\DataCache\DataCache;
 use ThomasInstitut\DataCache\InMemoryDataCache;
-use ThomasInstitut\DataCache\SimpleCacheAwareTrait;
+use ThomasInstitut\Test\DataCache\Auxiliary\SimpleCacheAwareTestClass;
 use TypeError;
-
 
 class SimpleCacheAwareTest extends TestCase
 {
 
-    public function testBasicBehaviour() : void {
+    public function testBasicBehaviour() : void
+    {
 
-        $cachingClass = new MyTestClass();
+        $cachingClass = new SimpleCacheAwareTestClass();
 
         $cache = new InMemoryDataCache();
 
@@ -68,9 +67,14 @@ class SimpleCacheAwareTest extends TestCase
     public function testCallablesBehaviour() : void
     {
 
+
         // bad callable
-        $cachingClass = new MyTestClass();
-        $cachingClass->setCache(function() { return 'bad bad callable'; });
+        $cachingClass = new SimpleCacheAwareTestClass();
+        $cachingClass->setCache(
+            function () {
+                return 'bad bad callable';
+            }
+        );
         $exceptionCaught = false;
         try {
             $cachingClass->getDataCache();
@@ -80,24 +84,12 @@ class SimpleCacheAwareTest extends TestCase
         $this->assertTrue($exceptionCaught);
 
         // good callable
-        $cachingClass->setCache(function() { return new InMemoryDataCache(); });
+        $cachingClass->setCache(
+            function () {
+                return new InMemoryDataCache();
+            }
+        );
         $cache = $cachingClass->getDataCache();
         $this->assertTrue(is_a($cache, DataCache::class));
-
-    }
-
-
-}
-
-
-class MyTestClass implements CacheAware {
-    use SimpleCacheAwareTrait;
-
-    public function cacheSet(string $key, string $data) : bool {
-        if ($this->isCacheInUse()) {
-            $this->getDataCache()->set($key, $data);
-            return true;
-        }
-        return false;
     }
 }

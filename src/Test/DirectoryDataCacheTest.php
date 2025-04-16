@@ -21,14 +21,15 @@ namespace ThomasInstitut\Test\DataCache;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Random\RandomException;
-use ThomasInstitut\DataCache\DataCacheReferenceTest;
 use ThomasInstitut\DataCache\DirectoryDataCache;
 use ThomasInstitut\DataCache\ItemNotInCacheException;
+use ThomasInstitut\DataCache\Reference\DataCacheReferenceTest;
 
 class DirectoryDataCacheTest extends TestCase
 {
 
-    public function testStandardTests() {
+    public function testStandardTests()
+    {
         $tester = new DataCacheReferenceTest('DirectoryDataCache');
         $tester->runAllTests(new DirectoryDataCache("/tmp", "DC"), 'DirectoryDataCache');
     }
@@ -89,7 +90,7 @@ class DirectoryDataCacheTest extends TestCase
             ],
             [
                 'Dot as separator',
-                new DirectoryDataCache('/tmp', 'mycache3', '', '.')
+                new DirectoryDataCache('/tmp', 'my-cache3', '', '.')
             ]
         ];
 

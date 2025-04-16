@@ -1,5 +1,5 @@
 <?php
-/* 
+/*
  *  Copyright (C) 2020-2025 Universität zu Köln
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -14,11 +14,10 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  */
 
 namespace ThomasInstitut\DataCache;
-
 
 class InMemoryDataCache implements DataCache
 {
@@ -64,7 +63,7 @@ class InMemoryDataCache implements DataCache
         $this->get($key);
 
         // if we get here, the item is in the cache and is not expired
-        if ($this->theCache[$key]['expires'] === -1){
+        if ($this->theCache[$key]['expires'] === -1) {
             return 0;
         }
 
@@ -103,7 +102,7 @@ class InMemoryDataCache implements DataCache
 
     public function flush(): void
     {
-       $this->theCache = [];
+        $this->theCache = [];
     }
 
     public function clean(): void

@@ -46,13 +46,13 @@ class MultiCacheDataCache implements DataCache
     /**
      *
      * @param DataCache[]|callable[] $caches DataCache objects or callables that generate a DataCache object
-     * @param string[] $cachePrefixes  Prefixes to attach to the key for each cache
-     * @param bool $strict  If true (default), throws an exception if a data cache cannot be constructed otherwise
+     * @param string[] $cachePrefixes Prefixes to attach to the key for each cache
+     * @param bool $strict If true (default), throws an exception if a data cache cannot be constructed otherwise
      *    just continues with an InMemoryDataCache in its place
      */
     public function __construct(array $caches, array $cachePrefixes = [], bool $strict = true)
     {
-        foreach($caches as $i => $dataCache) {
+        foreach ($caches as $i => $dataCache) {
             if (is_callable($dataCache) || is_a($dataCache, DataCache::class)) {
                 if (!isset($cachePrefixes[$i])) {
                     $cachePrefixes[$i] = '';
@@ -68,55 +68,31 @@ class MultiCacheDataCache implements DataCache
 
     public function setDefaultTtl(int $ttl): void
     {
-        foreach(array_keys($this->caches) as $i) {
+        foreach (array_keys($this->caches) as $i) {
             $dataCache = $this->getDataCache($i);
             $dataCache->setDefaultTtl($ttl);
         }
     }
 
-    private function getDataCache(int $index) : DataCache {
+    private function getDataCache(int $index): DataCache
+    {
         if (is_callable($this->caches[$index])) {
             $this->caches[$index] = call_user_func($this->caches[$index]);
             if (!is_object($this->caches[$index])) {
                 if ($this->strict) {
                     throw new RuntimeException("Callable for data cache $index did not return an object");
                 }
-                $this->caches[$index]= new InMemoryDataCache();
+                $this->caches[$index] = new InMemoryDataCache();
             }
             if (!is_a($this->caches[$index], DataCache::class)) {
                 if ($this->strict) {
-                    throw new RuntimeException("Callable for data cache $index did not return a DataCache: " . get_class($this->caches[$index]));
+                    throw new RuntimeException("Callable for data cache $index did not return a DataCache: " .
+                        get_class($this->caches[$index]));
                 }
-                $this->caches[$index]= new InMemoryDataCache();
+                $this->caches[$index] = new InMemoryDataCache();
             }
         }
         return $this->caches[$index];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function get(string $key): string
-    {
-        $cachesWithoutData = [];
-        foreach(array_keys($this->caches) as $i) {
-            $dataCache = $this->getDataCache($i);
-            try {
-                $data = $dataCache->get($this->prefixes[$i] . $key);
-                if (count($cachesWithoutData) > 0) {
-                    $remainingTtl = $dataCache->getRemainingTtl($key);
-                    if ($remainingTtl >= 0) {
-                        foreach ($cachesWithoutData as $cacheIndex) {
-                            $this->getDataCache($cacheIndex)->set($this->prefixes[$cacheIndex] . $key, $data, $remainingTtl);
-                        }
-                    }
-                }
-                return $data;
-            } catch (ItemNotInCacheException) {
-                $cachesWithoutData[] = $i;
-            }
-        }
-        throw new ItemNotInCacheException();
     }
 
     /**
@@ -134,9 +110,47 @@ class MultiCacheDataCache implements DataCache
     /**
      * @inheritDoc
      */
+    public function get(string $key): string
+    {
+        $cachesWithoutData = [];
+        foreach (array_keys($this->caches) as $i) {
+            $dataCache = $this->getDataCache($i);
+            try {
+                $data = $dataCache->get($this->prefixes[$i] . $key);
+                if (count($cachesWithoutData) > 0) {
+                    $remainingTtl = $dataCache->getRemainingTtl($key);
+                    if ($remainingTtl >= 0) {
+                        foreach ($cachesWithoutData as $cacheIndex) {
+                            $this->getDataCache($cacheIndex)->set(
+                                $this->prefixes[$cacheIndex] . $key,
+                                $data,
+                                $remainingTtl
+                            );
+                        }
+                    }
+                }
+                return $data;
+            } catch (ItemNotInCacheException) {
+                $cachesWithoutData[] = $i;
+            }
+        }
+        throw new ItemNotInCacheException();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getRemainingTtl(string $key): int
+    {
+        return -1;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function set(string $key, string $value, int $ttl = -1): void
     {
-        foreach(array_keys($this->caches) as $i) {
+        foreach (array_keys($this->caches) as $i) {
             $this->getDataCache($i)->set($this->prefixes[$i] . $key, $value, $ttl);
         }
     }
@@ -146,7 +160,7 @@ class MultiCacheDataCache implements DataCache
      */
     public function delete(string $key): void
     {
-        foreach(array_keys($this->caches) as $i) {
+        foreach (array_keys($this->caches) as $i) {
             $this->getDataCache($i)->delete($this->prefixes[$i] . $key);
         }
     }
@@ -156,7 +170,7 @@ class MultiCacheDataCache implements DataCache
      */
     public function flush(): void
     {
-        foreach(array_keys($this->caches) as $i) {
+        foreach (array_keys($this->caches) as $i) {
             $this->getDataCache($i)->flush();
         }
     }
@@ -166,16 +180,8 @@ class MultiCacheDataCache implements DataCache
      */
     public function clean(): void
     {
-        foreach(array_keys($this->caches) as $i) {
+        foreach (array_keys($this->caches) as $i) {
             $this->getDataCache($i)->clean();
         }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getRemainingTtl(string $key): int
-    {
-        return -1;
     }
 }

@@ -1,5 +1,5 @@
 <?php
-/* 
+/**
  *  Copyright (C) 2020-2025 Universität zu Köln
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -14,27 +14,27 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
  */
 
 namespace ThomasInstitut\DataCache;
 
-
 /**
  * Classes that implement this interface provide common functions
- * that allow clients to control caching in the class: use the cache or not, set the cache, tell whether
- * the case is in use or not.
+ * that allow clients to control caching in the class: use the cache or not, set
+ * the cache, tell whether the case is in use or not.
  */
 interface CacheAware
 {
     /**
      * Starts using the cache if the cache is set
+     *
      * @return void
      */
     public function useCache() : void;
 
     /**
      * Stops using the cache
+     *
      * @return void
      */
     public function doNotUseCache() : void;
@@ -42,19 +42,21 @@ interface CacheAware
     /**
      * Sets the cache
      *
-     * @param DataCache|callable $dataCache
+     * @param  DataCache|callable $dataCache
      * @return void
      */
     public function setCache(DataCache|callable $dataCache) : void;
 
     /**
      * Returns true if the cache is in use
+     *
      * @return bool
      */
     public function isCacheInUse() : bool;
 
     /**
      * Returns the DataCache
+     *
      * @return DataCache
      */
     public function getDataCache() : DataCache;

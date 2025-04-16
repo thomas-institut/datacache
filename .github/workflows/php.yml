@@ -1,4 +1,4 @@
-name: Build and Test
+name: Build, Test and Validate Coding Standard
 
 on:
   push:
@@ -32,5 +32,8 @@ jobs:
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
 
-    - name: Run test suite
-      run: composer run-script test Test
+    - name: Run test
+      run: composer run-script test
+
+    - name: Validate coding standard
+      run: composer run-script phpcs

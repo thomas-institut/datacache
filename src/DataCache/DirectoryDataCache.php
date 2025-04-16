@@ -28,9 +28,9 @@ use RuntimeException;
  */
 class DirectoryDataCache implements DataCache
 {
-    const string NoExpirationString = '0';
+    const string NO_EXPIRATION_STRING = '0';
 
-    const array BannedCharacters = [ '*', '/'];
+    const array BANNED_CHARACTERS = [ '*', '/'];
 
     private string $cachePath;
     private string $cacheName;
@@ -60,16 +60,18 @@ class DirectoryDataCache implements DataCache
      * @param string $separator
      * @param bool $alwaysUseKeyHashes
      */
-    public function __construct(string $directoryPath,
-                                string $cacheName, string $fileExtension = 'txt',
-                                string $separator = '-',
-                                bool $alwaysUseKeyHashes = false)
-    {
+    public function __construct(
+        string $directoryPath,
+        string $cacheName,
+        string $fileExtension = 'txt',
+        string $separator = '-',
+        bool $alwaysUseKeyHashes = false
+    ) {
         if (strlen($cacheName) === 0) {
             throw new InvalidArgumentException("Invalid cache name '$cacheName'");
         }
 
-        if (strlen($separator) !== 1 || in_array($separator, self::BannedCharacters)) {
+        if (strlen($separator) !== 1 || in_array($separator, self::BANNED_CHARACTERS)) {
             throw new InvalidArgumentException("Invalid separator character '$separator'");
         }
 
@@ -77,7 +79,7 @@ class DirectoryDataCache implements DataCache
             throw new InvalidArgumentException("Invalid file extension '$fileExtension'");
         }
 
-        $bannedCharacters = self::BannedCharacters;
+        $bannedCharacters = self::BANNED_CHARACTERS;
 
         if ($fileExtension !== '') {
             if ($separator === '.') {
@@ -103,7 +105,8 @@ class DirectoryDataCache implements DataCache
         $this->separator = $separator;
     }
 
-    private function getActualKey(string $key) : string {
+    private function getActualKey(string $key) : string
+    {
         if ($this->useHashes || !$this->canBePartOfFileName($key)) {
             return hash('sha256', $key);
         }
@@ -146,13 +149,14 @@ class DirectoryDataCache implements DataCache
     {
         $actualKey = $this->getActualKey($key);
         $fileName =  $this->cachePath . '/' . implode($this->separator, [$this->cacheName, $actualKey, $expires]);
-        if ($this->fileExtension !== ''){
+        if ($this->fileExtension !== '') {
             $fileName .= '.' . $this->fileExtension;
         }
         return $fileName;
     }
 
-    private function getAllFilePathsInCache(): array {
+    private function getAllFilePathsInCache(): array
+    {
         return glob("$this->cachePath/$this->cacheName*");
     }
 
@@ -160,7 +164,7 @@ class DirectoryDataCache implements DataCache
     {
         $fileName = preg_replace("/\.$this->fileExtension$/", '', basename($filePath));
         [, $key, $expires] = explode($this->separator, $fileName);
-        $expirationTimestamp = $expires === self::NoExpirationString ? 0 : intval($expires);
+        $expirationTimestamp = $expires === self::NO_EXPIRATION_STRING ? 0 : intval($expires);
         return [$key, $expirationTimestamp];
     }
 
@@ -191,13 +195,12 @@ class DirectoryDataCache implements DataCache
         if ($ttl < 0) {
             $ttl = $this->defaultTtl;
         }
-        $expires = self::NoExpirationString;
+        $expires = self::NO_EXPIRATION_STRING;
         if ($ttl > 0) {
             $expires = strval(time() + $ttl);
         }
 
         file_put_contents($this->getFilePathForKey($key, $expires), $value);
-
     }
 
     /**
@@ -213,7 +216,7 @@ class DirectoryDataCache implements DataCache
 
     private function canBePartOfFileName(string $key): bool
     {
-        $bannedCharacters = self::BannedCharacters;
+        $bannedCharacters = self::BANNED_CHARACTERS;
         $bannedCharacters[] = $this->separator;
         for ($i = 0; $i < 20; $i++) {
             $bannedCharacters[] = chr($i);

@@ -1,5 +1,5 @@
 <?php
-/* 
+/*
  *  Copyright (C) 2020-2025 Universität zu Köln
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -14,11 +14,10 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *  
+ *
  */
 
 namespace ThomasInstitut\DataCache;
-
 
 use RuntimeException;
 
@@ -56,15 +55,17 @@ trait SimpleCacheAwareTrait
             $this->dataCacheCallable = null;
         }
     }
-    public function isCacheInUse() : bool {
-       if ($this->dataCache === null) {
-           return $this->dataCacheCallable !== null && $this->cacheOn;
-       } else {
-           return $this->cacheOn;
-       }
+    public function isCacheInUse() : bool
+    {
+        if ($this->dataCache === null) {
+            return $this->dataCacheCallable !== null && $this->cacheOn;
+        } else {
+            return $this->cacheOn;
+        }
     }
 
-    public function getDataCache() : DataCache {
+    public function getDataCache() : DataCache
+    {
         if ($this->dataCache === null) {
             if ($this->dataCacheCallable === null) {
                 throw new RuntimeException("No DataCache instance available");
@@ -73,5 +74,4 @@ trait SimpleCacheAwareTrait
         }
         return $this->dataCache;
     }
-
 }
