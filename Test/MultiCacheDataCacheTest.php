@@ -1,4 +1,21 @@
 <?php
+/*
+ *  Copyright (C) 2020-2025 Universität zu Köln
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
 
 namespace ThomasInstitut\Test\DataCache;
 
@@ -7,7 +24,7 @@ use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use ThomasInstitut\DataCache\DataCacheReferenceTest;
 use ThomasInstitut\DataCache\InMemoryDataCache;
-use ThomasInstitut\DataCache\KeyNotInCacheException;
+use ThomasInstitut\DataCache\ItemNotInCacheException;
 use ThomasInstitut\DataCache\MultiCacheDataCache;
 
 class MultiCacheDataCacheTest extends TestCase
@@ -51,7 +68,7 @@ class MultiCacheDataCacheTest extends TestCase
             $randomCache->delete($key);
             try {
                 $this->assertEquals($multiCache->get($key), $testCase['value']);
-            } catch (KeyNotInCacheException) { // @codeCoverageIgnore
+            } catch (ItemNotInCacheException) { // @codeCoverageIgnore
                 $this->fail("Key '$key' not in multi-cache after being deleted from just one of the caches"); // @codeCoverageIgnore
             }
             // set it again
@@ -60,7 +77,7 @@ class MultiCacheDataCacheTest extends TestCase
     }
 
     /**
-     * @throws KeyNotInCacheException
+     * @throws ItemNotInCacheException
      */
     public function testBadCallablesInConstructor() : void {
         $testCases = [

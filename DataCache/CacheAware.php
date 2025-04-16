@@ -28,7 +28,7 @@ namespace ThomasInstitut\DataCache;
 interface CacheAware
 {
     /**
-     * Starts using the cache
+     * Starts using the cache if the cache is set
      * @return void
      */
     public function useCache() : void;
@@ -41,14 +41,21 @@ interface CacheAware
 
     /**
      * Sets the cache
-     * @param DataCache $dataCache
+     *
+     * @param DataCache|callable $dataCache
      * @return void
      */
-    public function setCache(DataCache $dataCache) : void;
+    public function setCache(DataCache|callable $dataCache) : void;
 
     /**
      * Returns true if the cache is in use
      * @return bool
      */
     public function isCacheInUse() : bool;
+
+    /**
+     * Returns the DataCache
+     * @return DataCache
+     */
+    public function getDataCache() : DataCache;
 }

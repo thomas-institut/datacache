@@ -33,10 +33,17 @@ use ThomasInstitut\TimeString\TimeString;
  */
 class DataCacheReferenceTest extends TestCase
 {
+
+    const int NumKeysToTest = 50;
+    const int NumReadIterations = 5;
+    const int ReferenceMaxKeyLength = 2048;
+    const int ReferenceMaxValueLength = 32 * 1024 * 1024;  // 32 MB
+
+    const int MaxValueLengthForTesting = 64 * 1024;
+
     private DataCache $dataCache;
     private string $testClassName;
     private string $keyPrefix;
-    private int $numKeysToTest = 50;
     private int $numReadIterations = 5;
 
     /**
@@ -45,11 +52,16 @@ class DataCacheReferenceTest extends TestCase
      */
     public function runAllTests(DataCache $dc, string $testClassName): void
     {
-        $this->setDataCache($dc, $testClassName);
-        $this->basicTest();
-        $this->deleteTest();
-        $this->extremeKeysTest();
-        $this->expirationTest();
+        try {
+            $this->setDataCache($dc, $testClassName);
+            $this->basicTest();
+            $this->deleteTest();
+            $this->extremeKeysTest();
+            $this->bigValueTest();
+            $this->expirationTest();
+        } catch (RandomException $e) { // @codeCoverageIgnore
+            $this->fail("Random number generator exception: " . $e->getMessage()); // @codeCoverageIgnore
+        }
     }
 
     /**
@@ -72,7 +84,7 @@ class DataCacheReferenceTest extends TestCase
         $exceptionCaught = false;
         try {
             $this->dataCache->get($this->keyPrefix . 'someKey');
-        } catch (KeyNotInCacheException) {
+        } catch (ItemNotInCacheException) {
             $exceptionCaught = true;
         }
         $this->assertTrue($exceptionCaught, $this->testClassName);
@@ -81,8 +93,8 @@ class DataCacheReferenceTest extends TestCase
         $this->dataCache->delete($this->keyPrefix . 'someKey');
 
         // build the two test sets
-        $testSet1 = $this->buildTestSet('set1', 'value', $this->numKeysToTest);
-        $testSet2 = $this->buildTestSet('set2', 'newValue', $this->numKeysToTest);
+        $testSet1 = $this->buildTestSet('set1', 'value', self::NumKeysToTest);
+        $testSet2 = $this->buildTestSet('set2', 'newValue', self::NumKeysToTest);
         $completeSet = [ ...$testSet1, ...$testSet2 ];
 
         // add first test set to cache
@@ -115,7 +127,7 @@ class DataCacheReferenceTest extends TestCase
                 if ($remainingTtl !== -1) {
                     $this->assertEquals(0, $remainingTtl);
                 }
-            } catch (KeyNotInCacheException) { // @codeCoverageIgnore
+            } catch (ItemNotInCacheException) { // @codeCoverageIgnore
                 $this->fail("Item {$testCase['key']} not in cache, iteration $i"); // @codeCoverageIgnore
             }
         }
@@ -132,11 +144,11 @@ class DataCacheReferenceTest extends TestCase
         $this->dataCache->flush();
         $this->dataCache->setDefaultTtl(0);
 
-        $testSet = $this->buildTestSet("delete", "valueToDelete", $this->numKeysToTest);
+        $testSet = $this->buildTestSet("delete", "valueToDelete", self::NumKeysToTest);
         foreach ($testSet as $testCase) {
             $this->dataCache->set($testCase['key'], $testCase['value']);
         }
-        for($i = 0; $i < $this->numReadIterations; $i++) {
+        for($i = 0; $i < self::NumReadIterations; $i++) {
            $testCase = $testSet[rand(0, count($testSet) - 1)];
            $this->dataCache->delete($testCase['key']);
            $this->assertFalse($this->dataCache->isInCache($testCase['key']));
@@ -147,7 +159,7 @@ class DataCacheReferenceTest extends TestCase
     {
         $valuesTestSet = [];
         for ($i = 0; $i < $numKeys; $i++) {
-            $valuesTestSet[] = ['key' => $keyPrefix . '_' . $i . '_' . rand(1, 10000), 'value' => $valuePrefix . '_' . rand(1, 1000000)];
+            $valuesTestSet[] = ['key' => $keyPrefix . '_' . $i . '_' . rand(1, 10000), 'value' => $valuePrefix . '_' . rand(1, 100000000)];
         }
         return $valuesTestSet;
     }
@@ -156,7 +168,7 @@ class DataCacheReferenceTest extends TestCase
     {
         // read the cache randomly
         $numKeys = count($testSet);
-        for ($i = 0; $i < $this->numReadIterations; $i++) {
+        for ($i = 0; $i < self::NumReadIterations; $i++) {
             $testCase = $testSet[rand(0, $numKeys - 1)];
             $exceptionCaught = false;
             try {
@@ -164,7 +176,7 @@ class DataCacheReferenceTest extends TestCase
                 if ($itemsShouldBeInCache) {
                     $this->assertEquals($testCase['value'], $cachedValue, $this->testClassName . ", cache read, iteration $i");
                 }
-            } catch (KeyNotInCacheException) {
+            } catch (ItemNotInCacheException) {
                 $exceptionCaught = true;
             }
             if ($itemsShouldBeInCache) {
@@ -177,22 +189,21 @@ class DataCacheReferenceTest extends TestCase
 
     protected function randomTestInCache(array $testSet, bool $expectedInCache) : void {
         $numKeys = count($testSet);
-        for ($i = 0; $i < $this->numReadIterations; $i++) {
+        for ($i = 0; $i < self::NumReadIterations; $i++) {
             $testCase = $testSet[rand(0, $numKeys - 1)];
             $this->assertEquals($expectedInCache, $this->dataCache->isInCache($testCase['key']));
         }
     }
 
+    /**
+     * @throws RandomException
+     */
     public function extremeKeysTest(): void
     {
         $testSet = [];
 
-        for ($i = 0; $i < $this->numKeysToTest; $i++) {
-            try {
-                $testSet[] = ['key' => random_bytes(rand(10, 1024)), 'value' => random_bytes(rand(512, 2048))];
-            } catch (RandomException $e) { // @codeCoverageIgnore
-                $this->fail("Could not get random bytes: " . $e->getMessage()); // @codeCoverageIgnore
-            }
+        for ($i = 0; $i < self::NumKeysToTest; $i++) {
+            $testSet[] = ['key' => random_bytes(rand(256, self::ReferenceMaxKeyLength)), 'value' => random_bytes(rand(256, self::MaxValueLengthForTesting))];
         }
 
         // fill the cache
@@ -201,7 +212,24 @@ class DataCacheReferenceTest extends TestCase
         }
 
         $this->randomRead($testSet, true);
+    }
 
+
+    /**
+     * @throws RandomException
+     */
+    public function bigValueTest(): void {
+        //  set, get and delete one big item
+        $key = 'BigItem' . rand(0, 1000000000);
+        $value = random_bytes(self::ReferenceMaxValueLength);
+        $this->dataCache->set($key, $value);
+        try {
+            $this->assertEquals($value, $this->dataCache->get($key));
+        } catch (ItemNotInCacheException) { // @codeCoverageIgnore
+            $this->fail("Big item not in cache"); // @codeCoverageIgnore
+        }
+        $this->dataCache->delete($key);
+        $this->assertFalse($this->dataCache->isInCache($key));
     }
 
     public function expirationTest(): void
@@ -215,13 +243,13 @@ class DataCacheReferenceTest extends TestCase
 
         // Fill in the cache
         $this->dataCache->setDefaultTtl($longTtl);
-        $longTtlTestCases = $this->buildTestSet('longTtl', 'value', $this->numKeysToTest);
+        $longTtlTestCases = $this->buildTestSet('longTtl', 'value', self::NumKeysToTest);
         foreach ($longTtlTestCases as $testCase) {
             $this->dataCache->set($testCase['key'], $testCase['value']);
         }
 
         $this->dataCache->setDefaultTtl($shortTtl);
-        $shortTtlTestCases = $this->buildTestSet('shortTtl', 'value', $this->numKeysToTest);
+        $shortTtlTestCases = $this->buildTestSet('shortTtl', 'value', self::NumKeysToTest);
         foreach ($shortTtlTestCases as $testCase) {
             $this->dataCache->set($testCase['key'], $testCase['value']);
         }
@@ -244,7 +272,7 @@ class DataCacheReferenceTest extends TestCase
                     $this->assertGreaterThan(0, $remainingTtl, "Iteration $i");
                     $this->assertLessThan($longTtl, $remainingTtl, "Iteration $i");
                 }
-            } catch (KeyNotInCacheException) { // @codeCoverageIgnore
+            } catch (ItemNotInCacheException) { // @codeCoverageIgnore
                 $this->fail("Key not in cache exception while determining remaining ttl, iteration $i"); // @codeCoverageIgnore
             }
         }

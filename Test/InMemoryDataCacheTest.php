@@ -20,11 +20,13 @@
 namespace ThomasInstitut\Test\DataCache;
 
 use PHPUnit\Framework\TestCase;
+use Random\RandomException;
 use ThomasInstitut\DataCache\DataCacheReferenceTest;
 use ThomasInstitut\DataCache\InMemoryDataCache;
 
 class InMemoryDataCacheTest extends TestCase
 {
+
 
     public function testStandardTests() {
         $tester = new DataCacheReferenceTest('InMemory');

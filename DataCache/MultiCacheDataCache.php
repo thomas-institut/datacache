@@ -112,11 +112,11 @@ class MultiCacheDataCache implements DataCache
                     }
                 }
                 return $data;
-            } catch (KeyNotInCacheException) {
+            } catch (ItemNotInCacheException) {
                 $cachesWithoutData[] = $i;
             }
         }
-        throw new KeyNotInCacheException();
+        throw new ItemNotInCacheException();
     }
 
     /**
@@ -126,7 +126,7 @@ class MultiCacheDataCache implements DataCache
     {
         try {
             return is_string($this->get($key));
-        } catch (KeyNotInCacheException) {
+        } catch (ItemNotInCacheException) {
             return false;
         }
     }

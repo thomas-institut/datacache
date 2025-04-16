@@ -20,32 +20,12 @@
 namespace ThomasInstitut\DataCache;
 
 
+use Exception;
+
 /**
- * Implements the CacheAware interface by adding
- * a protected DataCache variable and a boolean
- * cacheOn flag
+ * Exception thrown when a key does not exist in a DataCache implementation
  */
-trait SimpleCacheAware
+class ItemNotInCacheException extends Exception
 {
-
-    protected bool $cacheOn = false;
-    protected ?DataCache $dataCache = null;
-
-    public function useCache(): void
-    {
-        $this->cacheOn = true;
-    }
-    public function doNotUseCache(): void
-    {
-        $this->cacheOn = false;
-    }
-
-    public function setCache(DataCache $dataCache): void
-    {
-        $this->dataCache = $dataCache;
-    }
-    public function isCacheInUse() : bool {
-        return $this->cacheOn;
-    }
 
 }

@@ -18,9 +18,12 @@
  */
 namespace ThomasInstitut\Test\DataCache;
 
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use Random\RandomException;
 use ThomasInstitut\DataCache\DataCacheReferenceTest;
 use ThomasInstitut\DataCache\DirectoryDataCache;
+use ThomasInstitut\DataCache\ItemNotInCacheException;
 
 class DirectoryDataCacheTest extends TestCase
 {
@@ -28,5 +31,86 @@ class DirectoryDataCacheTest extends TestCase
     public function testStandardTests() {
         $tester = new DataCacheReferenceTest('DirectoryDataCache');
         $tester->runAllTests(new DirectoryDataCache("/tmp", "DC"), 'DirectoryDataCache');
+    }
+
+    /**
+     * @throws RandomException
+     */
+    public function testBadConstructors()
+    {
+
+        // bad cache names
+        $badCacheNames = ['', 'my*cache', 'my/cache', 'my.cache', 'my-cache'];
+        foreach ($badCacheNames as $badCacheName) {
+            $exceptionCaught = false;
+            try {
+                new DirectoryDataCache("/tmp", $badCacheName);
+            } catch (InvalidArgumentException) {
+                $exceptionCaught = true;
+            }
+            $this->assertTrue($exceptionCaught, "Testing bad cache name '$badCacheName'");
+        }
+
+
+        // bad file extensions
+        $badFileExtensions = ['.txt', '*txt', '/txt', '-txt'];
+        foreach ($badFileExtensions as $badFileExtension) {
+            $exceptionCaught = false;
+            try {
+                new DirectoryDataCache("/tmp", 'DC', $badFileExtension);
+            } catch (InvalidArgumentException) {
+                $exceptionCaught = true;
+            }
+            $this->assertTrue($exceptionCaught, "Testing bad file extension '$badFileExtension'");
+        }
+
+
+        // bad separators
+        $badSeparators = ['', '*', '/', '.'];
+        foreach ($badSeparators as $badSeparator) {
+            $exceptionCaught = false;
+            try {
+                new DirectoryDataCache("/tmp", 'DC', 'txt', $badSeparator);
+            } catch (InvalidArgumentException) {
+                $exceptionCaught = true;
+            }
+            $this->assertTrue($exceptionCaught, "Testing bad separator '$badSeparator'");
+        }
+
+        // Test valid combinations (even if they don't make sense)
+        $testCases = [
+            [
+                'Cache name with default separator',
+                new DirectoryDataCache('/tmp', 'my-cache-1', 'txt', '_')
+            ],
+            [
+                'File extension with default separator',
+                new DirectoryDataCache('/tmp', 'my-cache-2', '-txt', '_')
+            ],
+            [
+                'Dot as separator',
+                new DirectoryDataCache('/tmp', 'mycache3', '', '.')
+            ]
+        ];
+
+        foreach ($testCases as $testCase) {
+            [ $description, $cache] = $testCase;
+            $value = random_bytes(512);
+            $cache->set("MyKey:0", $value);
+            $this->assertEquals($value, $cache->get("MyKey:0"), $description);
+            $cache->delete("MyKey:0");
+            $exceptionCaught = false;
+            try {
+                $cache->get("MyKey:0");
+            } catch (ItemNotInCacheException) {
+                $exceptionCaught = true;
+            }
+            $this->assertTrue($exceptionCaught, $description);
+            $cache->set("MyKey:0", $value);
+            $cache->set("MyKey:2", $value);
+            $cache->set("MyKey:3", $value);
+            $cache->flush();
+            $cache->set("MyKey:1", $value); // just to see the files!
+        }
     }
 }

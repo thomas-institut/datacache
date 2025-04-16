@@ -45,11 +45,11 @@ class InMemoryDataCache implements DataCache
             if ($this->theCache[$key]['expires'] !== -1 && $this->theCache[$key]['expires'] <= $now) {
                 // expired!
                 $this->delete($key);
-                throw new KeyNotInCacheException("Key '$key' not in cache");
+                throw new ItemNotInCacheException("Key '$key' not in cache");
             }
             return $this->theCache[$key]['value'];
         }
-        throw new KeyNotInCacheException();
+        throw new ItemNotInCacheException();
     }
 
     /**

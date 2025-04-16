@@ -27,12 +27,14 @@ namespace ThomasInstitut\DataCache;
  * after a certain amount of time.
  *
  * Keys are strings without any restriction as to their content. That
- * is, any character can be part of a key. Any key under 1024 characters
+ * is, any character can be part of a key. Any key under 2048 characters
  * in length is supported, but specific implementations may allow
  * even longer keys.
  *
  * The values to be cached are strings without any restriction as to their
- * content. Specific cache implementations
+ * content. Specific cache implementations may impose restrictions on the
+ * maximum size but any value equal or less than 32 megabytes in length
+ * should be safe.
  *
  * @package ThomasInstitut\DataCache
  */
@@ -41,13 +43,13 @@ interface DataCache
 {
 
     /**
-     * Gets the value associated with the given key.
+     * Gets the value of the item associated with the given key.
      *
-     * If the key is not the cache, throws a `KeyNotInCacheException`
+     * If the item is not the cache, throws an `ItemNotInCacheException`
      *
      * @param string $key
      * @return string
-     * @throws KeyNotInCacheException
+     * @throws ItemNotInCacheException
      */
     public function get(string $key) : string;
 
@@ -59,24 +61,28 @@ interface DataCache
      *
      * @param string $key
      * @return int
-     * @throws KeyNotInCacheException
+     * @throws ItemNotInCacheException
      */
     public function getRemainingTtl(string $key) : int;
 
 
     /**
-     * Returns true if the given key is stored in the cache
+     * Returns true if the item with the given key is stored in the cache.
+     *
+     * This may or may not be more efficient than retrieving
+     * the item's value and catching an ItemNotInCacheException
+     *
      * @param string $key
      * @return bool
      */
     public function isInCache(string $key) : bool;
 
     /**
-     * Sets the value for the given key.
+     * Caches an item with the given key.
      *
      * If `$ttl` is greater than 0, the item expires after `$ttl` seconds.
      *
-     * If `$ttl` is equal to 0, the cache item never expires, and
+     * If `$ttl` is equal to 0, the cached item never expires, and
      * if `$ttl` < 0, a default TTL is used.
      *
      * @param string $key
@@ -90,14 +96,19 @@ interface DataCache
     /**
      * Sets the default TTL.
      *
+     * If `$ttl` is greater than 0, items expire after `$ttl` seconds. If `$ttl` is equal to 0, items never expire.
+     *
+     * If `$ttl` < 0, the current default TTL will remain unchanged.
+     *
      * @param int $ttl MUST be >= 0
      * @return void
      */
     public function setDefaultTtl(int $ttl) : void;
 
     /**
-     * Deletes the cache entry for the given key.
-     * No exception is thrown if the cache entry did not exist
+     * Deletes the item with the given key.
+     *
+     * No exception is thrown if the item did not exist
      * in the first place.
      *
      * @param string $key
@@ -106,7 +117,11 @@ interface DataCache
 
 
     /**
-     * Deletes all entries in the cache.
+     * Deletes all items in the cache.
+     *
+     * At a minimum, all items set with the instance will be deleted
+     * but this method may also delete items set by other cache instances
+     * that share the same underlying storage or service.
      *
      * @return void
      */
@@ -114,10 +129,12 @@ interface DataCache
 
 
     /**
-     * Tries to delete all expired entries.
+     * Tries to remove all expired items from memory or from the
+     * cache's underlying storage.
      *
-     * Depending on the cache this may not do anything
-     * right away.
+     * Some implementations may not be able to do clean expired items
+     * manually, so there is no guarantee that this method will
+     * actually do anything.
      *
      * @return void
      */
