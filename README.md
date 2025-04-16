@@ -1,7 +1,11 @@
 # DataCache
 
+![Latest Stable Version](https://img.shields.io/packagist/v/thomas-institut/datacache?label=Stable)
 ![Test](https://github.com/thomas-institut/datacache/actions/workflows/php.yml/badge.svg?branch=main)
 ![GitHub License](https://img.shields.io/github/license/thomas-institut/datacache)
+
+![Dynamic JSON Badge](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fthomas-institut%2Fdatacache%2Frefs%2Fheads%2Fmain%2Fcomposer.json&query=%24.require.php&label=PHP%20Version)
+
 
 
 This package provides an interface to a cache that can store strings. It also provides
