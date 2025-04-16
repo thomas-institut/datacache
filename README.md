@@ -112,8 +112,8 @@ $cache = new InMemoryDataCache();
 ```
 
 This cache supports arbitrary length keys and values, can report remaining TTLs and
-will only remove expired items from memory when explicitly deleted or when the
-`clean` method is called.
+will only remove expired items from the underlying PHP array when explicitly deleted or 
+when the `clean` or `flush` methods are called.
 
 When the instance is destroyed, all cached items will be destroyed as well.
 
@@ -143,15 +143,15 @@ where `$sep` is a separator character (by default `'-'`) and `$ext` is a
 file extension (by default `'txt'`). 
 
 By default, `$keyOrHash` is the item's key if the key does not contain the separator 
-nor any character that the file system does not allow in file name. If that's the case, 
-the hash of the key will be used instead. 
+nor any character that the file system does not allow in file name. Otherwise,
+a hash of the key will be used instead.
 
 `$exp` is the Unix timestamp after which the item is no longer valid.  
 
 The constructor has three more optional parameters to control file names: 
 * the file extension to use for all files (default `'txt'`). It can 
-  be empty. 
-* a character to use as field separator in file name (default `'-'`). 
+  be empty.
+* the character to use as field separator in file name (default `'-'`). 
   The characters `*` and `/` cannot be used as separators. If the file extension
   is not empty, the dot cannot be used either.
 * a boolean flag that instructs the cache to ALWAYS use the hash of an item's key in the file 
@@ -165,12 +165,12 @@ TTLs and will only delete files from disk when items are explicitly deleted or w
 
 `MultiCacheDataCache` is a `DataCache` that aggregates a list of `DataCache` instances.
 When an item is stored, it is stored in all caches and when it is deleted it is deleted
-from all caches as well. When an item is retrieved, however, it is only retrieved from 
+from all caches as well. However, when an item is retrieved, it is only retrieved from 
 the first cache in the list that has it.
 
-The intended use of this cache is having faster caches in the first positions in the
-list and slower, perhaps persistent caches, in the latter positions. The slower, 
-persistent caches constitute a backup to the faster caches.
+The intended use of this cache is setting up faster caches in the first positions in the
+list and slower, perhaps persistent caches, in the latter positions. Reads will normally
+be handled by the faster caches, while the slower, persistent caches are used as backup.
 
 The constructor requires an array of cache instances or callables that return 
 a cache instance, an optional array of key prefixes to attach to keys in the corresponding
@@ -219,4 +219,4 @@ $myInstance->doNotUseCache();
 $myInstance->someMethod(); // cache will not be used
 ```
 
-The trait `SimpleCacheAware` trait provided in this package implements this interface.
+The trait `SimpleCacheAwareTrait` provided in this package implements this interface.
