@@ -9,6 +9,9 @@
       "email": "rafael.najera@uni-koeln.de"
     }
   ],
+    "scripts": {
+    "test" : "phpunit"
+  },
   "require": {
     "php": ">=8.3"
   },
