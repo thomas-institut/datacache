@@ -1,5 +1,7 @@
 # DataCache
 
+![Test](https://github.com/thomas-institut/datacache/actions/workflows/php.yml/badge.svg?branch=main)
+
 This package provides an interface to a cache that can store strings. It also provides
 three simple, yet effective implementations.
 
