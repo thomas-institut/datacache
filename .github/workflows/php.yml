@@ -1,4 +1,4 @@
-name: Build, Test and Validate Coding Standard
+name: Test and Validation
 
 on:
   push:
