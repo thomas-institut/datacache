@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cfb33dea824ba7dc1788f11d4ee5e9ea",
+    "content-hash": "a7cbedb2f78cc9cf7ee79bff3fa51b07",
     "packages": [],
     "packages-dev": [
         {
@@ -567,16 +567,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "12.1.2",
+            "version": "12.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "6f2775cc4b7b19ba5a411c188e855eb0cc78a711"
+                "reference": "72ca50e817dd7d65356c16772c30f06c01a6fae2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/6f2775cc4b7b19ba5a411c188e855eb0cc78a711",
-                "reference": "6f2775cc4b7b19ba5a411c188e855eb0cc78a711",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/72ca50e817dd7d65356c16772c30f06c01a6fae2",
+                "reference": "72ca50e817dd7d65356c16772c30f06c01a6fae2",
                 "shasum": ""
             },
             "require": {
@@ -644,7 +644,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/12.1.2"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/12.1.3"
             },
             "funding": [
                 {
@@ -656,11 +656,19 @@
                     "type": "github"
                 },
                 {
+                    "url": "https://liberapay.com/sebastianbergmann",
+                    "type": "liberapay"
+                },
+                {
+                    "url": "https://thanks.dev/u/gh/sebastianbergmann",
+                    "type": "thanks_dev"
+                },
+                {
                     "url": "https://tidelift.com/funding/github/packagist/phpunit/phpunit",
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-04-08T08:05:27+00:00"
+            "time": "2025-04-22T06:11:09+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -1660,52 +1668,6 @@
                 }
             ],
             "time": "2024-03-03T12:36:25+00:00"
-        },
-        {
-            "name": "thomas-institut/timestring",
-            "version": "v2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/thomas-institut/timestring.git",
-                "reference": "5b913d75df3177007e27eafcd2f85dcc4266637d"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/thomas-institut/timestring/zipball/5b913d75df3177007e27eafcd2f85dcc4266637d",
-                "reference": "5b913d75df3177007e27eafcd2f85dcc4266637d",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=8.1"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^10.5.7"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "ThomasInstitut\\TimeString\\": "TimeString"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-3.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "Rafael Nájera",
-                    "email": "rafael.najera@uni-koeln.de"
-                }
-            ],
-            "description": "Dealing with MySql datetime strings with microseconds",
-            "keywords": [
-                "data"
-            ],
-            "support": {
-                "issues": "https://github.com/thomas-institut/timestring/issues",
-                "source": "https://github.com/thomas-institut/timestring/tree/v2.0"
-            },
-            "time": "2025-01-08T13:26:44+00:00"
         }
     ],
     "aliases": [],

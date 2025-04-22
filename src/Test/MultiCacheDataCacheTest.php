@@ -78,8 +78,10 @@ class MultiCacheDataCacheTest extends TestCase
             try {
                 $this->assertEquals($multiCache->get($key), $testCase['value']);
             } catch (ItemNotInCacheException) { // @codeCoverageIgnore
+                // @codeCoverageIgnoreStart
                 $this->fail("Item '$key' not in multi-cache after being 
-                   deleted in one of the caches"); // @codeCoverageIgnore
+                   deleted in one of the caches");
+                // @codeCoverageIgnoreEnd
             }
             // set it again
             $multiCache->set($testCase['key'], $testCase['value']);

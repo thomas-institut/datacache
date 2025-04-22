@@ -72,7 +72,7 @@ class DataCacheReferenceTest extends TestCase
     {
         $this->dataCache = $dc;
         $this->testClassName = $testClassName;
-        $this->keyPrefix = 'DataCacheTest:' . $testClassName . ':' . TimeString::now()->toCompactString() . ':'
+        $this->keyPrefix = 'DataCacheTest:' . $testClassName . ':' . time() . ':' . ':'
             . rand(1, 1000) . ':';
     }
 
