@@ -23,7 +23,6 @@ use PHPUnit\Framework\TestCase;
 use Random\RandomException;
 use ThomasInstitut\DataCache\DataCache;
 use ThomasInstitut\DataCache\ItemNotInCacheException;
-use ThomasInstitut\TimeString\TimeString;
 
 /**
  * Class DataCacheTest
@@ -98,7 +97,6 @@ class DataCacheReferenceTest extends TestCase
         $testSet2 = $this->buildTestSet('set2', 'newValue', self::NUM_KEYS_TO_TEST);
         $completeSet = [ ...$testSet1, ...$testSet2 ];
 
-        // add first test set to cache
         foreach ($testSet1 as $testCase) {
             $this->dataCache->set($testCase['key'], $testCase['value']);
         }

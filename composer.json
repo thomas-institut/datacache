@@ -12,7 +12,6 @@
     "scripts": {
     "test" : "phpunit src/Test",
     "coverage": "php -dxdebug.coverage_enable=1 -dxdebug.mode=coverage vendor/bin/phpunit --coverage-html coverage --coverage-filter src src/Test",
-
     "phpcs": "vendor/bin/phpcs --standard=PSR2 src"
   },
   "require": {

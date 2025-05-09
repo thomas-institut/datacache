@@ -50,7 +50,7 @@ class DirectoryDataCache implements DataCache
      * `$separator` is a single character other than `*` or `/` or dot. If `$fileExtension` is empty, a dot can be used
      * as a separator as well.
      *
-     * By default, if `$alwaysUseKeyHashes` is false, the cache will try to use item's key to construct the name of
+     * By default, if `$alwaysUseKeyHashes` is false, the cache will try to use the item's key to construct the name of
      * the item's file. When this is not possible (because, for example, the key contains invalid file name characters),
      * or if `$alwaysUseKeyHashes` is true, a hash of the key will be used instead.
      *
